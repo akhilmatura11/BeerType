@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="beer"
+            type="com.kotlin.balancehero.data.Beers" />
+
+        <variable
+            name="viewModel"
+            type="com.kotlin.balancehero.ui.SharedViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:onClick="@{(view) -> viewModel.onItemClick(beer)}"
+        android:padding="8dp">
+
+        <CheckBox
+            android:id="@+id/checkboxTab2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{beer.checkbox}"
+            android:onCheckedChanged="@{(checkbox, checked) -> viewModel.onCheckboxClicked(checked, beer)}"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/nameTab2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@{beer.name}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/imageTab2"
+            app:layout_constraintStart_toEndOf="@id/checkboxTab2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/imageTab2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/image_of_the_beer"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
