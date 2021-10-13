@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kotlin.balancehero.data.Beers
 import com.kotlin.balancehero.data.BeersPagingSource
@@ -47,7 +46,7 @@ class SharedViewModel : ViewModel() {
     }
 
     fun updateTab2Adapter(list: List<Beers>) {
-        mTab2Adapter.updateList(list)
+//        mTab2Adapter.updateList(list)
     }
 
     fun onItemClick(beer: Beers) {
@@ -55,12 +54,7 @@ class SharedViewModel : ViewModel() {
     }
 
     fun onCheckboxClicked(checked: Boolean, beer: Beers) {
-        mTab1Adapter.updateItem(beer, checked)
+//        mTab1Adapter.updateItem(beer, checked)
         mTab2Adapter.updateItem(beer, checked)
     }
-
-    fun submitDataTab1(pageData: PagingData<Beers>) {
-        TODO("Not yet implemented")
-    }
-
 }

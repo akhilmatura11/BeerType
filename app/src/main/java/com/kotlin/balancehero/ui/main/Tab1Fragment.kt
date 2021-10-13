@@ -14,9 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kotlin.balancehero.data.Beers
 import com.kotlin.balancehero.databinding.FragmentMainBinding
 import com.kotlin.balancehero.ui.SharedViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class Tab1Fragment : Fragment() {
 
@@ -63,9 +61,10 @@ class Tab1Fragment : Fragment() {
         binding.recyclerView.adapter = viewModel.getTab1Adapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
-        requireActivity().lifecycleScope.launch(
+        lifecycleScope.launchWhenCreated {
             viewModel.beers.collectLatest { pageData ->
-                viewModel.submitDataTab1(pageData)
-            })
+                viewModel.getTab2Adapter().submitData(pageData)
+            }
+        }
     }
 }

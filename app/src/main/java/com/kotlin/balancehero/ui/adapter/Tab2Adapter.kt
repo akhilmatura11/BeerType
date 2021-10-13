@@ -3,6 +3,8 @@ package com.kotlin.balancehero.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kotlin.balancehero.R
@@ -11,9 +13,8 @@ import com.kotlin.balancehero.databinding.ItemTab2Binding
 import com.kotlin.balancehero.ui.SharedViewModel
 
 class Tab2Adapter(
-    var viewModel: SharedViewModel,
-val list : MutableList<Beers> = arrayListOf()
-) : RecyclerView.Adapter<Tab2Adapter.Tab2ViewHolder>() {
+    var viewModel: SharedViewModel
+) : PagingDataAdapter<Beers, Tab2Adapter.Tab2ViewHolder>(DiffUtilsCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tab2ViewHolder {
 
         val binding: ItemTab2Binding = DataBindingUtil
@@ -22,22 +23,13 @@ val list : MutableList<Beers> = arrayListOf()
     }
 
     override fun onBindViewHolder(holder: Tab2ViewHolder, position: Int) {
-        holder.setRowDetails(list.get(position))
-    }
-
-    override fun getItemCount(): Int = list.size
-
-    fun updateList(list: List<Beers>) {
-        this.list.addAll(list)
-        notifyDataSetChanged()
+        holder.setRowDetails(getItem(position)!!)
     }
 
     fun updateItem(beer: Beers, checked: Boolean) {
-        if(beer.checkbox != checked) {
-            val index = list.indexOf(beer)
-            list.set(index, Beers(beer, checked))
-            notifyItemChanged(index)
-        }
+        var index = beer.id - 1
+        snapshot()[index]?.checkbox= checked
+        notifyItemChanged(index)
     }
 
     class Tab2ViewHolder(
@@ -52,6 +44,18 @@ val list : MutableList<Beers> = arrayListOf()
             Glide.with(binding.imageTab2.context)
                 .load(beers.image_url)
                 .into(binding.imageTab2)
+        }
+
+    }
+
+    class DiffUtilsCallback : DiffUtil.ItemCallback<Beers>() {
+        override fun areItemsTheSame(oldItem: Beers, newItem: Beers): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Beers, newItem: Beers): Boolean {
+            return oldItem.id == newItem.id
+                    && oldItem.name == newItem.name
         }
 
     }
