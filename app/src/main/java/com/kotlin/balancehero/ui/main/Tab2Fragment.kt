@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kotlin.balancehero.databinding.FragmentMainBinding
 import com.kotlin.balancehero.ui.SharedViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 class Tab2Fragment : Fragment() {
 
@@ -37,5 +39,11 @@ class Tab2Fragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.adapter = viewModel.getTab2Adapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.beers.collectLatest { pagedData ->
+                viewModel.getTab2Adapter().submitData(pagedData)
+            }
+        }
     }
 }
