@@ -12,9 +12,9 @@ class BeersPagingSource(private val apiInterface: ApiInterface) : PagingSource<I
             val response = apiInterface.getList(nextPage)
 
             LoadResult.Page(
-                data = response.result,
+                data = response,
                 prevKey = if (nextPage == 1) null else nextPage - 1,
-                nextKey = nextPage
+                nextKey = nextPage + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

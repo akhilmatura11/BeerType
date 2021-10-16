@@ -29,16 +29,11 @@ class Tab1Fragment : Fragment() {
                     val data: Intent? = result.data
                     val beers: Beers = data?.getParcelableExtra("ActivityResult")!!
                     val checked: Boolean = data.getBooleanExtra("checkedResult", false)
-                    viewModel.onCheckboxClicked(checked, beers)
+                    if (beers.checkbox != checked)
+                        viewModel.onCheckboxClicked(checked, beers, false)
                 }
             }
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-//        viewModel.getBeersList().observe(requireActivity(), {
-//            if (it != null && it.isNotEmpty()) {
-//                viewModel.updateTab1Adapter(it)
-//            }
-//        })
-
         viewModel.getSelectedItem().observe(requireActivity(), {
             if (it != null) {
                 val intent: Intent = Intent(requireActivity(), ItemDetailActivity::class.java)
@@ -62,8 +57,8 @@ class Tab1Fragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
         lifecycleScope.launchWhenCreated {
-            viewModel.beers.collectLatest { pageData ->
-                viewModel.getTab2Adapter().submitData(pageData)
+            viewModel.getBeers().collectLatest { pageData ->
+                viewModel.getTab1Adapter().submitData(pageData)
             }
         }
     }

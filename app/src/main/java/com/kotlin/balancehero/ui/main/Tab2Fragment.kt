@@ -20,11 +20,6 @@ class Tab2Fragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-//        viewModel.getBeersList().observe(requireActivity(), {
-//            if (it != null && it.isNotEmpty()) {
-//                viewModel.updateTab2Adapter(it)
-//            }
-//        })
     }
 
     override fun onCreateView(
@@ -41,8 +36,8 @@ class Tab2Fragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
         lifecycleScope.launchWhenCreated {
-            viewModel.beers.collectLatest { pagedData ->
-                viewModel.getTab2Adapter().submitData(pagedData)
+            viewModel.getBeers().collectLatest { pageData ->
+                viewModel.getTab2Adapter().submitData(pageData)
             }
         }
     }

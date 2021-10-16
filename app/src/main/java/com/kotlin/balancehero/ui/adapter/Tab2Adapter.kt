@@ -15,8 +15,8 @@ import com.kotlin.balancehero.ui.SharedViewModel
 class Tab2Adapter(
     var viewModel: SharedViewModel
 ) : PagingDataAdapter<Beers, Tab2Adapter.Tab2ViewHolder>(DiffUtilsCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tab2ViewHolder {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tab2ViewHolder {
         val binding: ItemTab2Binding = DataBindingUtil
             .inflate(LayoutInflater.from(parent.context), R.layout.item_tab2, parent, false)
         return Tab2ViewHolder(binding, viewModel)
@@ -26,14 +26,20 @@ class Tab2Adapter(
         holder.setRowDetails(getItem(position)!!)
     }
 
-    fun updateItem(beer: Beers, checked: Boolean) {
-        var index = beer.id - 1
-        snapshot()[index]?.checkbox= checked
-        notifyItemChanged(index)
+    fun updateItem(beer: Beers, checked: Boolean, fromLayout: Boolean) {
+        val index = beer.id - 1
+        if (itemCount > index) {
+            if (snapshot()[index]?.checkbox != checked) {
+                snapshot()[index]?.checkbox = checked
+                notifyItemChanged(index)
+            } else if (!fromLayout) {
+                notifyItemChanged(index)
+            }
+        }
     }
 
     class Tab2ViewHolder(
-        var binding: ItemTab2Binding,
+        private var binding: ItemTab2Binding,
         var viewModel: SharedViewModel
     ) : RecyclerView.ViewHolder(binding.root) {
         fun setRowDetails(beers: Beers) {
@@ -56,8 +62,8 @@ class Tab2Adapter(
         override fun areContentsTheSame(oldItem: Beers, newItem: Beers): Boolean {
             return oldItem.id == newItem.id
                     && oldItem.name == newItem.name
+                    && oldItem.checkbox == newItem.checkbox
         }
-
     }
 
 }
