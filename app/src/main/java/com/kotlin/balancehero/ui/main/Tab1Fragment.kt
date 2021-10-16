@@ -36,7 +36,7 @@ class Tab1Fragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         viewModel.getSelectedItem().observe(requireActivity(), {
             if (it != null) {
-                val intent: Intent = Intent(requireActivity(), ItemDetailActivity::class.java)
+                val intent = Intent(requireActivity(), ItemDetailActivity::class.java)
                 intent.putExtra("beerItem", it)
                 resultLauncher.launch(intent)
             }

@@ -39,7 +39,7 @@ class Tab1Adapter(
     }
 
     class Tab1ViewHolder(
-        var binding: ItemTab1Binding,
+        private var binding: ItemTab1Binding,
         var viewModel: SharedViewModel
     ) : RecyclerView.ViewHolder(binding.root) {
         fun setRowDetails(beers: Beers) {
