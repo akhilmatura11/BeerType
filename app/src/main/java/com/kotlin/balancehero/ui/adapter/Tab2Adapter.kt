@@ -3,8 +3,6 @@ package com.kotlin.balancehero.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kotlin.balancehero.R
@@ -13,8 +11,9 @@ import com.kotlin.balancehero.databinding.ItemTab2Binding
 import com.kotlin.balancehero.ui.SharedViewModel
 
 class Tab2Adapter(
-    var viewModel: SharedViewModel
-) : PagingDataAdapter<Beers, Tab2Adapter.Tab2ViewHolder>(DiffUtilsCallback()) {
+    var viewModel: SharedViewModel,
+    private val list: MutableList<Beers> = arrayListOf()
+) : RecyclerView.Adapter<Tab2Adapter.Tab2ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tab2ViewHolder {
         val binding: ItemTab2Binding = DataBindingUtil
@@ -23,18 +22,23 @@ class Tab2Adapter(
     }
 
     override fun onBindViewHolder(holder: Tab2ViewHolder, position: Int) {
-        holder.setRowDetails(getItem(position)!!)
+        holder.setRowDetails(list[position])
     }
 
-    fun updateItem(beer: Beers, checked: Boolean, fromLayout: Boolean) {
-        val index = beer.id - 1
-        if (itemCount > index) {
-            if (snapshot()[index]?.checkbox != checked) {
-                snapshot()[index]?.checkbox = checked
-                notifyItemChanged(index)
-            } else if (!fromLayout) {
-                notifyItemChanged(index)
-            }
+    override fun getItemCount(): Int {
+        return list.size
+    }
+
+    fun updateList(beers: List<Beers>) {
+        list.addAll(beers)
+        notifyDataSetChanged()
+    }
+
+    fun updateItem(beer: Beers, checked: Boolean) {
+        if (beer.checkbox != checked) {
+            val index = list.indexOf(beer)
+            list[index] = Beers(beer, checked)
+            notifyItemChanged(index)
         }
     }
 
@@ -51,19 +55,5 @@ class Tab2Adapter(
                 .load(beers.image_url)
                 .into(binding.imageTab2)
         }
-
     }
-
-    class DiffUtilsCallback : DiffUtil.ItemCallback<Beers>() {
-        override fun areItemsTheSame(oldItem: Beers, newItem: Beers): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Beers, newItem: Beers): Boolean {
-            return oldItem.id == newItem.id
-                    && oldItem.name == newItem.name
-                    && oldItem.checkbox == newItem.checkbox
-        }
-    }
-
 }

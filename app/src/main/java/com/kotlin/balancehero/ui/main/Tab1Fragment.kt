@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kotlin.balancehero.data.Beers
 import com.kotlin.balancehero.databinding.FragmentMainBinding
 import com.kotlin.balancehero.ui.SharedViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 class Tab1Fragment : Fragment() {
 
@@ -30,10 +28,11 @@ class Tab1Fragment : Fragment() {
                     val beers: Beers = data?.getParcelableExtra("ActivityResult")!!
                     val checked: Boolean = data.getBooleanExtra("checkedResult", false)
                     if (beers.checkbox != checked)
-                        viewModel.onCheckboxClicked(checked, beers, false)
+                        viewModel.onCheckboxClicked(checked, beers)
                 }
             }
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
         viewModel.getSelectedItem().observe(requireActivity(), {
             if (it != null) {
                 val intent = Intent(requireActivity(), ItemDetailActivity::class.java)
@@ -48,6 +47,7 @@ class Tab1Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding.progressBar.visibility = View.VISIBLE
         return binding.root
     }
 
@@ -56,10 +56,20 @@ class Tab1Fragment : Fragment() {
         binding.recyclerView.adapter = viewModel.getTab1Adapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.getBeers().collectLatest { pageData ->
-                viewModel.getTab1Adapter().submitData(pageData)
-            }
+        binding.nestedScrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+//            if (scrollY == (v.measuredHeight - v.getChildAt(0).getMeasuredHeight())) {
+          //  viewModel.getNextPage()
+            binding.progressBar.visibility = View.VISIBLE
+//            }
         }
+
+        viewModel.getBeers().observe(requireActivity(), {
+            if (it != null) {
+                if (it.isNotEmpty()) {
+                    viewModel.updateTab1Adapter(it)
+                }
+                binding.progressBar.visibility = View.GONE
+            }
+        })
     }
 }

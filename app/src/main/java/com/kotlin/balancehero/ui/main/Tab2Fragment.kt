@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kotlin.balancehero.databinding.FragmentMainBinding
 import com.kotlin.balancehero.ui.SharedViewModel
-import kotlinx.coroutines.flow.collectLatest
 
 class Tab2Fragment : Fragment() {
 
@@ -20,6 +18,7 @@ class Tab2Fragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
     }
 
     override fun onCreateView(
@@ -27,6 +26,7 @@ class Tab2Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding.progressBar.visibility = View.VISIBLE
         return binding.root
     }
 
@@ -35,10 +35,20 @@ class Tab2Fragment : Fragment() {
         binding.recyclerView.adapter = viewModel.getTab2Adapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
-        lifecycleScope.launchWhenCreated {
-            viewModel.getBeers().collectLatest { pageData ->
-                viewModel.getTab2Adapter().submitData(pageData)
-            }
+        binding.nestedScrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+//            if (scrollY == (v.measuredHeight - v.getChildAt(0).getMeasuredHeight())) {
+           //     viewModel.getNextPage()
+                binding.progressBar.visibility = View.VISIBLE
+//            }
         }
+
+        viewModel.getBeers().observe(requireActivity(), {
+            if (it != null) {
+                if (it.isNotEmpty()) {
+                    viewModel.updateTab2Adapter(it)
+                }
+                binding.progressBar.visibility = View.GONE
+            }
+        })
     }
 }

@@ -6,8 +6,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 class ApiClient {
     companion object {
-        val baseUrl = "https://api.punkapi.com/v2/"
-        fun getClient(): Retrofit {
+        fun getClient(baseUrl : String): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(OkHttpClient.Builder().build())
