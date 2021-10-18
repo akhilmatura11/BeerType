@@ -38,4 +38,9 @@ class DataRepository {
             }
         })
     }
+
+    fun update(beer: Beers, checked: Boolean) {
+        val index: Int = beer.id - 1
+        beersList.value?.get(index)?.checkbox = checked
+    }
 }

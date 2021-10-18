@@ -1,30 +1,40 @@
 package com.kotlin.balancehero
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
 import com.kotlin.balancehero.data.Beers
-import junit.framework.Assert.assertEquals
+import com.kotlin.balancehero.ui.main.MainActivity
+import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.RecordedRequest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import retrofit2.Call
 import java.io.IOException
 
-
+@LargeTest
+@RunWith(AndroidJUnit4::class)
 class MockWebServerTest {
-    private lateinit var mockBackEnd: MockWebServer
+    @get:Rule
+    val activityRule = ActivityTestRule(MainActivity::class.java, true, false)
+
+    private var mockBackEnd: MockWebServer = MockWebServer()
     private lateinit var apiService: Call<List<Beers>>
 
     @Before
     @Throws(IOException::class)
     fun setUp() {
-        mockBackEnd = MockWebServer()
         mockBackEnd.start()
     }
 
     @Test
     @Throws(Exception::class)
-    fun getEmployeeById() {
+    fun getBeer() {
         val baseUrl: String = String.format(
             "http://localhost:%s",
             mockBackEnd.port
@@ -41,25 +51,22 @@ class MockWebServerTest {
                 .addHeader("Content-Type", "application/json")
         )
 
-//        mockBackEnd.dispatcher = object : Dispatcher() {
-//            override fun dispatch(request: MockWebServer.Recorded): MockResponse {
-//                return MockResponse()
-//                    .setResponseCode(200)
-//                    .setBody(
-//                        "[{\"id\":26," +
-//                                "\"name\":\"Skull Candy\"," +
-//                                "\"image_url\":\"https://images.punkapi.com/v2/keg.png\"," +
-//                                "\"checkbox\":\"false\"}]"
-//                    )
-//            }
+        mockBackEnd.setDispatcher(object : Dispatcher() {
+            override fun dispatch(request: RecordedRequest): MockResponse {
+                return MockResponse()
+                    .setResponseCode(200)
+                    .setBody(
+                        "[{\"id\":26," +
+                                "\"name\":\"Skull Candy\"," +
+                                "\"image_url\":\"https://images.punkapi.com/v2/keg.png\"," +
+                                "\"checkbox\":\"false\"}]"
+                    )
+            }
+        })
 
-//            val beer: List<Beers> =
-//                ApiClient.getClient(baseUrl).create(ApiInterface::class.java)
-//                    .getList(100
-//
-//            assertEquals(beer.get(0).name, "Skull Candy")
-        val recordedRequest = mockBackEnd.takeRequest()
-        assertEquals(recordedRequest.method, "GET")
+        activityRule.launchActivity(null)
+
+        Thread.sleep(7000)
     }
 
     @After

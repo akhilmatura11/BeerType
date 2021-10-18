@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,11 +57,11 @@ class Tab1Fragment : Fragment() {
         binding.recyclerView.adapter = viewModel.getTab1Adapter()
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
 
-        binding.nestedScrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-//            if (scrollY == (v.measuredHeight - v.getChildAt(0).getMeasuredHeight())) {
-          //  viewModel.getNextPage()
-            binding.progressBar.visibility = View.VISIBLE
-//            }
+        binding.nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
+                viewModel.getNextPage()
+                binding.progressBar.visibility = View.VISIBLE
+            }
         }
 
         viewModel.getBeers().observe(requireActivity(), {

@@ -37,8 +37,10 @@ class Tab2Adapter(
     fun updateItem(beer: Beers, checked: Boolean) {
         if (beer.checkbox != checked) {
             val index = list.indexOf(beer)
-            list[index] = Beers(beer, checked)
-            notifyItemChanged(index)
+            if(index > -1) {
+                list[index] = Beers(beer, checked)
+                notifyItemChanged(index)
+            }
         }
     }
 

@@ -46,7 +46,10 @@ class SharedViewModel : ViewModel() {
 
     fun onCheckboxClicked(checked: Boolean, beer: Beers) {
         mTab1Adapter.updateItem(beer, checked)
-        mTab2Adapter.updateItem(beer, checked)
+        if (mTab2Adapter.itemCount > 0)
+            mTab2Adapter.updateItem(beer, checked)
+        else
+            DataRepository.getInstance().update(beer, checked)
     }
 
     fun getNextPage() {
